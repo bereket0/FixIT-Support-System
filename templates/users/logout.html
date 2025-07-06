@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}Logged Out - FixIT{% endblock %}
+
+{% block extra_css %}
+<style>
+    .logout-container {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .logout-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        max-width: 500px;
+        width: 100%;
+    }
+    .logout-header {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        text-align: center;
+        color: white;
+    }
+    .logout-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.9;
+    }
+    .logout-body {
+        padding: 3rem 2rem;
+        text-align: center;
+        color: white;
+    }
+    .thank-you-text {
+        font-size: 1.5rem;
+        font-weight: 300;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+    .back-soon-text {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .btn-custom {
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        text-decoration: none;
+    }
+    .btn-primary-custom {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+    .btn-primary-custom:hover {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+    .btn-light-custom {
+        background: rgba(255, 255, 255, 0.9);
+        color: #667eea;
+        border: 2px solid rgba(255, 255, 255, 0.9);
+    }
+    .btn-light-custom:hover {
+        background: white;
+        color: #667eea;
+        border-color: white;
+    }
+    .particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        pointer-events: none;
+    }
+    .particle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(180deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="logout-container">
+    <div class="card logout-card">
+        <!-- Animated Particles -->
+        <div class="particles">
+            <div class="particle" style="width: 10px; height: 10px; top: 20%; left: 10%; animation-delay: 0s;"></div>
+            <div class="particle" style="width: 15px; height: 15px; top: 60%; left: 80%; animation-delay: 1s;"></div>
+            <div class="particle" style="width: 8px; height: 8px; top: 80%; left: 20%; animation-delay: 2s;"></div>
+            <div class="particle" style="width: 12px; height: 12px; top: 30%; left: 70%; animation-delay: 3s;"></div>
+            <div class="particle" style="width: 6px; height: 6px; top: 70%; left: 60%; animation-delay: 4s;"></div>
+        </div>
+        
+        <div class="logout-header">
+            <div class="logout-icon">
+                <i class="fas fa-hand-wave"></i>
+            </div>
+            <h2 class="mb-0">Thank You!</h2>
+        </div>
+        
+        <div class="logout-body">
+            <p class="thank-you-text">
+                Thank you for your time!<br>
+                We appreciate you using FixIT.
+            </p>
+            <p class="back-soon-text">
+                We'll be back to you ASAP!<br>
+                Have a great day ahead.
+            </p>
+            
+            <div class="action-buttons">
+                <a href="{% url 'employee_dashboard' %}" class="btn btn-custom btn-light-custom">
+                    <i class="fas fa-home me-2"></i>Back to Home
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-custom btn-primary-custom">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login Again
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add entrance animation
+        const card = document.querySelector('.logout-card');
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'all 0.8s ease';
+        
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, 100);
+        
+        // Add floating animation to particles
+        const particles = document.querySelectorAll('.particle');
+        particles.forEach((particle, index) => {
+            particle.style.animationDelay = `${index * 0.5}s`;
+        });
+    });
+</script>
+{% endblock %} 

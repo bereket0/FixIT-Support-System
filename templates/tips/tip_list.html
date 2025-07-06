@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}Tech Tips - FixIT{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-lightbulb me-2"></i>Tech Tips</h1>
+            {% if user.groups.filter.name == 'IT Admin' %}
+                <a href="{% url 'tip_create' %}" class="btn btn-success">
+                    <i class="fas fa-plus me-1"></i>Add Tech Tip
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Filters and Search -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-filter me-2"></i>Filters & Search</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="search" class="form-label">Search</label>
+                        <input type="text" class="form-control" id="search" name="search" 
+                               value="{{ current_filters.search }}" placeholder="Search tips...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-control" id="category" name="category">
+                            <option value="">All Categories</option>
+                            {% for category_code, category_name in category_choices %}
+                                <option value="{{ category_code }}" {% if current_filters.category == category_code %}selected{% endif %}>
+                                    {{ category_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="week" class="form-label">Week</label>
+                        <input type="number" class="form-control" id="week" name="week" 
+                               value="{{ current_filters.week }}" placeholder="Week number">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="fas fa-search me-1"></i>Filter
+                        </button>
+                        <a href="{% url 'tip_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i>Clear
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tech Tips Grid -->
+<div class="row">
+    <div class="col-12">
+        {% if page_obj %}
+            <div class="row">
+                {% for tip in page_obj %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span class="badge bg-info">Week {{ tip.week_number }}</span>
+                            <span class="badge bg-secondary">{{ tip.category }}</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ tip.title }}</h5>
+                            <p class="card-text text-muted">
+                                {{ tip.description|truncatewords:20 }}
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">{{ tip.created_at|date:"M d, Y" }}</small>
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'tip_detail' tip.pk %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    {% if user.groups.filter.name == 'IT Admin' %}
+                                        <a href="{% url 'tip_edit' tip.pk %}" class="btn btn-sm btn-outline-warning">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'tip_delete' tip.pk %}" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+                <nav aria-label="Tech tips pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if current_filters.category %}&category={{ current_filters.category }}{% endif %}{% if current_filters.week %}&week={{ current_filters.week }}{% endif %}{% if current_filters.search %}&search={{ current_filters.search }}{% endif %}">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if current_filters.category %}&category={{ current_filters.category }}{% endif %}{% if current_filters.week %}&week={{ current_filters.week }}{% endif %}{% if current_filters.search %}&search={{ current_filters.search }}{% endif %}">
+                                    <i class="fas fa-angle-left"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        <li class="page-item active">
+                            <span class="page-link">
+                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                            </span>
+                        </li>
+                        
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if current_filters.category %}&category={{ current_filters.category }}{% endif %}{% if current_filters.week %}&week={{ current_filters.week }}{% endif %}{% if current_filters.search %}&search={{ current_filters.search }}{% endif %}">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if current_filters.category %}&category={{ current_filters.category }}{% endif %}{% if current_filters.week %}&week={{ current_filters.week }}{% endif %}{% if current_filters.search %}&search={{ current_filters.search }}{% endif %}">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-lightbulb fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No tech tips found</h4>
+                <p class="text-muted">No tech tips match your current filters.</p>
+                {% if user.groups.filter.name == 'IT Admin' %}
+                    <a href="{% url 'tip_create' %}" class="btn btn-success">
+                        <i class="fas fa-plus me-1"></i>Create First Tech Tip
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

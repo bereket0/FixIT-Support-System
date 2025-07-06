@@ -1,0 +1,527 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - FixIT{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        transition: transform 0.2s;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    .stat-icon {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+    .quick-action-btn {
+        border-radius: 10px;
+        padding: 15px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    .quick-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .dashboard-section {
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+    .progress-ring {
+        width: 60px;
+        height: 60px;
+    }
+    .activity-item {
+        border-left: 3px solid #007bff;
+        padding-left: 15px;
+        margin-bottom: 15px;
+    }
+    .activity-item.success {
+        border-left-color: #28a745;
+    }
+    .activity-item.warning {
+        border-left-color: #ffc107;
+    }
+    .activity-item.info {
+        border-left-color: #17a2b8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-0">
+                        <i class="fas fa-tachometer-alt me-3 text-primary"></i>IT Admin Dashboard
+                    </h1>
+                    <p class="text-muted mb-0">Welcome back, {{ user.username }}! Here's your system overview.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'employee_dashboard' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-home me-1"></i>Employee Portal
+                    </a>
+                    <a href="{% url 'admin:index' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-cog me-1"></i>Django Admin
+                    </a>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-danger">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card bg-gradient-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-1">{{ total_tickets }}</h2>
+                            <p class="mb-0 opacity-75">Total Tickets</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card bg-gradient-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-1">{{ pending_tickets }}</h2>
+                            <p class="mb-0 opacity-75">Pending</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card bg-gradient-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-1">{{ in_progress_tickets }}</h2>
+                            <p class="mb-0 opacity-75">In Progress</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card bg-gradient-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-1">{{ solved_tickets }}</h2>
+                            <p class="mb-0 opacity-75">Solved</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card dashboard-section">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>This Month's Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="border-end">
+                                <h3 class="text-primary mb-1">{{ monthly_stats.new_tickets }}</h3>
+                                <p class="text-muted mb-0">New Tickets</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <h3 class="text-success mb-1">{{ monthly_stats.solved_tickets }}</h3>
+                            <p class="text-muted mb-0">Solved Tickets</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            <div class="card dashboard-section">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-percentage me-2"></i>Resolution Rate</h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if total_tickets > 0 %}
+                        {% widthratio solved_tickets total_tickets 100 as resolution_rate %}
+                        <div class="progress-ring mx-auto mb-3">
+                            <div class="progress" style="height: 60px;">
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                     style="width: {{ resolution_rate }}%" 
+                                     aria-valuenow="{{ resolution_rate }}" 
+                                     aria-valuemin="0" aria-valuemax="100">
+                                    <span class="fw-bold">{{ resolution_rate }}%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-muted mb-0">Overall ticket resolution rate</p>
+                    {% else %}
+                        <p class="text-muted">No tickets to calculate resolution rate</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card dashboard-section">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="{% url 'ticket_list' %}" class="btn quick-action-btn btn-primary w-100">
+                                <i class="fas fa-ticket-alt me-2"></i>View All Tickets
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="{% url 'tip_list' %}" class="btn quick-action-btn btn-success w-100">
+                                <i class="fas fa-lightbulb me-2"></i>Manage Tech Tips
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="{% url 'quiz_list' %}" class="btn quick-action-btn btn-warning w-100">
+                                <i class="fas fa-question-circle me-2"></i>Manage Quizzes
+                            </a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <button type="button" class="btn quick-action-btn btn-secondary w-100" data-bs-toggle="modal" data-bs-target="#createEmployeeModal">
+                                <i class="fas fa-user-plus me-2"></i>Add Employee
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card dashboard-section">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Employee Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary mb-3">Create New Employee Account</h6>
+                            <form method="post" action="{% url 'create_employee' %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="username" name="username" required>
+                                    <div class="form-text">This will be the employee's login username</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                    <div class="form-text">Minimum 8 characters recommended</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="confirm_password" class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email (Optional)</label>
+                                    <input type="email" class="form-control" id="email" name="email">
+                                    <div class="form-text">For password reset functionality</div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-user-plus me-2"></i>Create Employee Account
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-success mb-3">Recent Employee Accounts</h6>
+                            {% if recent_employees %}
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Username</th>
+                                                <th>Created</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for employee in recent_employees %}
+                                            <tr>
+                                                <td><strong>{{ employee.username }}</strong></td>
+                                                <td>{{ employee.date_joined|date:"M d, Y" }}</td>
+                                                <td>
+                                                    {% if employee.is_active %}
+                                                        <span class="badge bg-success">Active</span>
+                                                    {% else %}
+                                                        <span class="badge bg-danger">Inactive</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="{% url 'admin:auth_user_changelist' %}" class="btn btn-outline-secondary btn-sm">
+                                        <i class="fas fa-cog me-1"></i>Manage All Users
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">No employee accounts created yet</p>
+                                    <p class="text-muted small">Create the first employee account using the form on the left</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Row -->
+    <div class="row">
+        <!-- Recent Tickets -->
+        <div class="col-lg-8 mb-4">
+            <div class="card dashboard-section">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-ticket-alt me-2"></i>Recent Tickets</h5>
+                    <a href="{% url 'ticket_list' %}" class="btn btn-sm btn-light">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if tickets %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th>Category</th>
+                                        <th>Status</th>
+                                        <th>Created By</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for ticket in tickets %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ ticket.subject|truncatechars:30 }}</strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">{{ ticket.category }}</span>
+                                        </td>
+                                        <td>
+                                            {% if ticket.status == 'Pending' %}
+                                                <span class="badge bg-warning text-dark">{{ ticket.status }}</span>
+                                            {% elif ticket.status == 'In Progress' %}
+                                                <span class="badge bg-info">{{ ticket.status }}</span>
+                                            {% else %}
+                                                <span class="badge bg-success">{{ ticket.status }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ ticket.created_by.username }}</td>
+                                        <td>{{ ticket.created_at|date:"M d, Y" }}</td>
+                                        <td>
+                                            <a href="{% url 'ticket_detail' ticket.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No tickets found.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="col-lg-4 mb-4">
+            <div class="card dashboard-section">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Recent Tips -->
+                    <h6 class="text-muted mb-3"><i class="fas fa-lightbulb me-1"></i>Recent Tech Tips</h6>
+                    {% for tip in recent_tips %}
+                    <div class="activity-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong>{{ tip.title }}</strong>
+                                <br><small class="text-muted">Week {{ tip.week_number }}</small>
+                            </div>
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted small">No recent tech tips</p>
+                    {% endfor %}
+
+                    <hr>
+
+                    <!-- Recent Quizzes -->
+                    <h6 class="text-muted mb-3"><i class="fas fa-question-circle me-1"></i>Recent Quizzes</h6>
+                    {% for quiz in recent_quizzes %}
+                    <div class="activity-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong>{{ quiz.title }}</strong>
+                                <br><small class="text-muted">{{ quiz.created_at|date:"M d, Y" }}</small>
+                            </div>
+                            <span class="badge bg-info">Active</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted small">No recent quizzes</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Employee Modal -->
+<div class="modal fade" id="createEmployeeModal" tabindex="-1" aria-labelledby="createEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="createEmployeeModalLabel">
+                    <i class="fas fa-user-plus me-2"></i>Create New Employee Account
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'create_employee' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="modal_username" class="form-label">Username *</label>
+                                <input type="text" class="form-control" id="modal_username" name="username" required>
+                                <div class="form-text">This will be the employee's login username</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="modal_email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="modal_email" name="email">
+                                <div class="form-text">Optional - for password reset functionality</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="modal_first_name" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="modal_first_name" name="first_name">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="modal_last_name" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="modal_last_name" name="last_name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="modal_password" class="form-label">Password *</label>
+                                <input type="password" class="form-control" id="modal_password" name="password" required>
+                                <div class="form-text">Minimum 8 characters recommended</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="modal_confirm_password" class="form-label">Confirm Password *</label>
+                                <input type="password" class="form-control" id="modal_confirm_password" name="confirm_password" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Important:</strong> The employee will be able to log in immediately with these credentials. 
+                        Make sure to provide them with their username and password securely.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-1"></i>Create Employee Account
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Password confirmation validation
+document.addEventListener('DOMContentLoaded', function() {
+    const password = document.getElementById('modal_password');
+    const confirmPassword = document.getElementById('modal_confirm_password');
+    
+    function validatePassword() {
+        if (password.value !== confirmPassword.value) {
+            confirmPassword.setCustomValidity('Passwords do not match');
+        } else {
+            confirmPassword.setCustomValidity('');
+        }
+    }
+    
+    password.addEventListener('change', validatePassword);
+    confirmPassword.addEventListener('keyup', validatePassword);
+});
+</script>
+
+{% endblock %} 

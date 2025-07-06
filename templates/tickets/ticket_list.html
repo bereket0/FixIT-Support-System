@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block title %}Tickets - FixIT{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-ticket-alt me-2"></i>Tickets</h1>
+            <a href="{% url 'ticket_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>New Ticket
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filters and Search -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-filter me-2"></i>Filters & Search</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="search" class="form-label">Search</label>
+                        <input type="text" class="form-control" id="search" name="search" 
+                               value="{% if current_filters.search and current_filters.search != 'None' %}{{ current_filters.search }}{% endif %}" 
+                               placeholder="Search tickets...">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-control" id="status" name="status">
+                            <option value="">All Status</option>
+                            {% for status_code, status_name in status_choices %}
+                                <option value="{{ status_code }}" {% if current_filters.status == status_code %}selected{% endif %}>
+                                    {{ status_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-control" id="category" name="category">
+                            <option value="">All Categories</option>
+                            {% for category_code, category_name in category_choices %}
+                                <option value="{{ category_code }}" {% if current_filters.category == category_code %}selected{% endif %}>
+                                    {{ category_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="fas fa-search me-1"></i>Filter
+                        </button>
+                        <a href="{% url 'ticket_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i>Clear
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tickets List -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-list me-2"></i>Ticket List</h5>
+            </div>
+            <div class="card-body">
+                {% if page_obj %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    {% if is_admin %}
+                                        <th>Created By</th>
+                                        <th>Assigned To</th>
+                                    {% endif %}
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ticket in page_obj %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'ticket_detail' ticket.pk %}" class="text-decoration-none">
+                                            {{ ticket.subject }}
+                                        </a>
+                                    </td>
+                                    <td><span class="badge bg-secondary">{{ ticket.category }}</span></td>
+                                    <td>
+                                        {% if ticket.status == 'Pending' %}
+                                            <span class="badge bg-warning text-dark">{{ ticket.status }}</span>
+                                        {% elif ticket.status == 'In Progress' %}
+                                            <span class="badge bg-info">{{ ticket.status }}</span>
+                                        {% else %}
+                                            <span class="badge bg-success">{{ ticket.status }}</span>
+                                        {% endif %}
+                                        {% if is_admin and ticket.last_employee_update %}
+                                            <br><small class="text-warning">
+                                                <i class="fas fa-user-edit me-1"></i>Updated by employee
+                                            </small>
+                                        {% endif %}
+                                    </td>
+                                    {% if is_admin %}
+                                        <td>{{ ticket.created_by.username }}</td>
+                                        <td>{{ ticket.assigned_to.username|default:"-" }}</td>
+                                    {% endif %}
+                                    <td>{{ ticket.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'ticket_detail' ticket.pk %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if is_admin or ticket.created_by == user %}
+                                                <a href="{% url 'ticket_edit' ticket.pk %}" class="btn btn-sm btn-outline-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'ticket_delete' ticket.pk %}" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    {% if page_obj.has_other_pages %}
+                        <nav aria-label="Ticket pagination">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1{% if current_filters.status %}&status={{ current_filters.status }}{% endif %}{% if current_filters.category %}&category={{ current_filters.category }}{% endif %}{% if current_filters.search %}&search={{ current_filters.search }}{% endif %}">
+                                            <i class="fas fa-angle-double-left"></i>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if current_filters.status %}&status={{ current_filters.status }}{% endif %}{% if current_filters.category %}&category={{ current_filters.category }}{% endif %}{% if current_filters.search %}&search={{ current_filters.search }}{% endif %}">
+                                            <i class="fas fa-angle-left"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                                <li class="page-item active">
+                                    <span class="page-link">
+                                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                                    </span>
+                                </li>
+                                
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if current_filters.status %}&status={{ current_filters.status }}{% endif %}{% if current_filters.category %}&category={{ current_filters.category }}{% endif %}{% if current_filters.search %}&search={{ current_filters.search }}{% endif %}">
+                                            <i class="fas fa-angle-right"></i>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if current_filters.status %}&status={{ current_filters.status }}{% endif %}{% if current_filters.category %}&category={{ current_filters.category }}{% endif %}{% if current_filters.search %}&search={{ current_filters.search }}{% endif %}">
+                                            <i class="fas fa-angle-double-right"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No tickets found.</p>
+                        <a href="{% url 'ticket_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Create Your First Ticket
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

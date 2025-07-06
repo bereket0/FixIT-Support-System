@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ tip.title }} - FixIT{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-lightbulb me-2"></i>Tech Tip Details</h1>
+            <div class="btn-group" role="group">
+                {% if is_admin %}
+                    <a href="{% url 'tip_edit' tip.pk %}" class="btn btn-warning">
+                        <i class="fas fa-edit me-1"></i>Edit
+                    </a>
+                    <a href="{% url 'tip_delete' tip.pk %}" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>Delete
+                    </a>
+                {% endif %}
+                <a href="{% url 'tip_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <!-- Tip Information -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle me-2"></i>Tip Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong>Title:</strong>
+                        <p class="mb-0">{{ tip.title }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Category:</strong>
+                        <p class="mb-0"><span class="badge bg-secondary">{{ tip.category }}</span></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Week Number:</strong>
+                        <p class="mb-0"><span class="badge bg-info">Week {{ tip.week_number }}</span></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Created:</strong>
+                        <p class="mb-0">{{ tip.created_at|date:"F d, Y \a\t g:i A" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-align-left me-2"></i>Description</h5>
+            </div>
+            <div class="card-body">
+                <div class="tip-content">
+                    {{ tip.description|linebreaks }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- Quick Actions -->
+        {% if is_admin %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-cogs me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'tip_edit' tip.pk %}" class="btn btn-warning">
+                            <i class="fas fa-edit me-1"></i>Edit Tip
+                        </a>
+                        <a href="{% url 'tip_create' %}" class="btn btn-success">
+                            <i class="fas fa-plus me-1"></i>Create New Tip
+                        </a>
+                        <a href="{% url 'tip_list' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-1"></i>View All Tips
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Tip Statistics -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-bar me-2"></i>Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="border-end">
+                            <h6 class="text-muted">Age</h6>
+                            <p class="mb-0">{{ tip.created_at|timesince }}</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h6 class="text-muted">Week</h6>
+                        <p class="mb-0">{{ tip.week_number }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Tips -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-clock me-2"></i>Recent Tips</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'tip_list' %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">View All Tips</h6>
+                            <small class="text-muted">Browse all tech tips</small>
+                        </div>
+                        <p class="mb-1 text-muted">Access the complete collection of tech tips and tricks</p>
+                    </a>
+                    <a href="{% url 'tip_create' %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">Create New Tip</h6>
+                            <small class="text-muted">Add new content</small>
+                        </div>
+                        <p class="mb-1 text-muted">Share new tech tips with the team</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.tip-content {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.tip-content p {
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %} 

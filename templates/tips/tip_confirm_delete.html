@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Tech Tip - FixIT{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4><i class="fas fa-exclamation-triangle me-2"></i>Confirm Deletion</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <h5><i class="fas fa-warning me-2"></i>Warning!</h5>
+                    <p class="mb-0">You are about to delete the tech tip "<strong>{{ tip.title }}</strong>". This action cannot be undone.</p>
+                </div>
+                
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6>Tip Details:</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><strong>Title:</strong> {{ tip.title }}</li>
+                            <li><strong>Category:</strong> {{ tip.category }}</li>
+                            <li><strong>Week:</strong> {{ tip.week_number }}</li>
+                            <li><strong>Created:</strong> {{ tip.created_at|date:"M d, Y" }}</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'tip_detail' tip.pk %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i>Delete Tech Tip
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,676 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #4f46e5;
+        --secondary-color: #7c3aed;
+        --success-color: #059669;
+        --info-color: #0891b2;
+        --warning-color: #d97706;
+        --danger-color: #dc2626;
+        --light-bg: #f8fafc;
+        --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        margin: 2rem auto;
+        padding: 3rem 2rem;
+        box-shadow: var(--card-shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23f0f0f0"/><circle cx="75" cy="75" r="1" fill="%23f0f0f0"/><circle cx="50" cy="10" r="0.5" fill="%23f0f0f0"/><circle cx="10" cy="60" r="0.5" fill="%23f0f0f0"/><circle cx="90" cy="40" r="0.5" fill="%23f0f0f0"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+        pointer-events: none;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .welcome-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+    }
+
+    .welcome-subtitle {
+        font-size: 1.2rem;
+        color: #64748b;
+        margin-bottom: 2rem;
+        font-weight: 500;
+    }
+
+    .login-section {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn-modern {
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-modern:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary-modern {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-primary-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(79, 70, 229, 0.6);
+        color: white;
+    }
+
+    .btn-success-modern {
+        background: linear-gradient(135deg, var(--success-color), #10b981);
+        color: white;
+        box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4);
+    }
+
+    .btn-success-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(5, 150, 105, 0.6);
+        color: white;
+    }
+
+    .btn-info-modern {
+        background: linear-gradient(135deg, var(--info-color), #06b6d4);
+        color: white;
+        box-shadow: 0 4px 15px rgba(8, 145, 178, 0.4);
+    }
+
+    .btn-info-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(8, 145, 178, 0.6);
+        color: white;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 20px;
+        border: none;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--hover-shadow);
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .quick-action-btn {
+        padding: 2rem 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .quick-action-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+        transform: translateX(-100%);
+        transition: transform 0.6s;
+    }
+
+    .quick-action-btn:hover::before {
+        transform: translateX(100%);
+    }
+
+    .quick-action-btn h5 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .quick-action-btn p {
+        opacity: 0.9;
+        font-size: 0.95rem;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--hover-shadow);
+    }
+
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+        border-bottom: none;
+        font-weight: 600;
+    }
+
+    .tip-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .tip-card:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+
+    .ticket-item {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .ticket-item:hover {
+        border-color: var(--primary-color);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .badge-modern {
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-label {
+        font-size: 1rem;
+        opacity: 0.9;
+        font-weight: 500;
+    }
+
+    .floating-action-btn {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border: none;
+        box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .floating-action-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 12px 35px rgba(79, 70, 229, 0.6);
+        color: white;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        position: relative;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        border-radius: 2px;
+    }
+
+    .welcome-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .hero-section {
+            margin: 1rem;
+            padding: 2rem 1rem;
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+        }
+
+        .welcome-subtitle {
+            font-size: 1rem;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+        }
+
+        .floating-action-btn {
+            bottom: 1rem;
+            right: 1rem;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+        }
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.6s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-slide-up {
+        animation: slideUp 0.8s ease-out;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section animate-fade-in">
+    <div class="hero-content">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="welcome-badge">
+                    <i class="fas fa-star me-2"></i>Welcome to FixIT Support Portal
+                </div>
+                <h1 class="welcome-title">Get Help When You Need It</h1>
+                <p class="welcome-subtitle">
+                    Submit support tickets, learn new tech skills, and stay updated with our knowledge base. 
+                    We're here to make your work easier!
+                </p>
+            </div>
+            <div class="col-lg-4">
+                {% if not user.is_authenticated %}
+                <div class="login-section">
+                    <h5 class="mb-3">
+                        <i class="fas fa-sign-in-alt me-2 text-primary"></i>Quick Access
+                    </h5>
+                    <p class="mb-3 text-muted">Sign in to access your personalized dashboard</p>
+                    <a href="{% url 'login' %}" class="btn btn-primary-modern btn-modern w-100 mb-2">
+                        <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                    </a>
+                </div>
+                {% else %}
+                <div class="login-section">
+                    <h5 class="mb-3">
+                        <i class="fas fa-user-check me-2 text-success"></i>Welcome Back!
+                    </h5>
+                    <p class="mb-3">Hello, <strong>{{ user.username }}</strong>! You're all set.</p>
+                    {% if user.groups.all.0.name == 'IT Admin' %}
+                        <a href="{% url 'admin_dashboard' %}" class="btn btn-warning btn-modern w-100 mb-2">
+                            <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'logout' %}" class="btn btn-outline-secondary btn-modern w-100">
+                        <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Quick Stats (if logged in) -->
+    {% if user.is_authenticated and user_tickets %}
+    <div class="row mb-5 animate-slide-up">
+        <div class="col-12">
+            <h2 class="section-title">Your Support Overview</h2>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stats-card">
+                <div class="stats-number">{{ user_tickets.count }}</div>
+                <div class="stats-label">Total Tickets</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stats-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="stats-number">{{ user_tickets|length }}</div>
+                <div class="stats-label">Active Tickets</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stats-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                <div class="stats-number">{{ recent_tips.count }}</div>
+                <div class="stats-label">Available Tips</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stats-card" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
+                <div class="stats-number">{% if current_quiz %}1{% else %}0{% endif %}</div>
+                <div class="stats-label">Active Quizzes</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Quick Actions -->
+    <div class="row mb-5 animate-slide-up">
+        <div class="col-12">
+            <h2 class="section-title">
+                <i class="fas fa-bolt me-2 text-primary"></i>What Can We Help You With?
+            </h2>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="feature-card h-100">
+                <div class="card-body text-center p-0">
+                    <div class="quick-action-btn bg-primary text-white">
+                        <i class="fas fa-ticket-alt fa-3x mb-3"></i>
+                        <h5>Report an Issue</h5>
+                        <p class="mb-0">Having trouble with your computer or software? Let us know!</p>
+                    </div>
+                </div>
+                <div class="card-footer text-center border-0 bg-transparent pb-4">
+                    <a href="{% url 'ticket_create' %}" class="btn btn-primary-modern btn-modern">
+                        <i class="fas fa-plus me-2"></i>Create Support Ticket
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="feature-card h-100">
+                <div class="card-body text-center p-0">
+                    <div class="quick-action-btn bg-success text-white">
+                        <i class="fas fa-lightbulb fa-3x mb-3"></i>
+                        <h5>Learn New Skills</h5>
+                        <p class="mb-0">Discover helpful tips and tricks to work smarter</p>
+                    </div>
+                </div>
+                <div class="card-footer text-center border-0 bg-transparent pb-4">
+                    <a href="{% url 'tip_list' %}" class="btn btn-success-modern btn-modern">
+                        <i class="fas fa-book me-2"></i>Browse Tech Tips
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="feature-card h-100">
+                <div class="card-body text-center p-0">
+                    <div class="quick-action-btn bg-info text-white">
+                        <i class="fas fa-question-circle fa-3x mb-3"></i>
+                        <h5>Test Your Knowledge</h5>
+                        <p class="mb-0">Take fun quizzes to improve your tech skills</p>
+                    </div>
+                </div>
+                <div class="card-footer text-center border-0 bg-transparent pb-4">
+                    <a href="{% url 'quiz_list' %}" class="btn btn-info-modern btn-modern">
+                        <i class="fas fa-play me-2"></i>Start Learning
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Recent Tech Tips -->
+        <div class="col-lg-8 mb-4">
+            <div class="card animate-slide-up">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Latest Tech Tips & Tricks
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_tips %}
+                        <div class="row">
+                            {% for tip in recent_tips %}
+                            <div class="col-md-6 mb-3">
+                                <div class="tip-card h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h6 class="card-title mb-0 fw-bold">{{ tip.title }}</h6>
+                                            <span class="badge badge-modern bg-success">Week {{ tip.week_number }}</span>
+                                        </div>
+                                        <p class="card-text text-muted">{{ tip.description|truncatewords:20 }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge badge-modern bg-secondary">{{ tip.category }}</span>
+                                            <a href="{% url 'tip_detail' tip.id %}" class="btn btn-sm btn-outline-success">
+                                                <i class="fas fa-eye me-1"></i>Read More
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center mt-4">
+                            <a href="{% url 'tip_list' %}" class="btn btn-success-modern btn-modern">
+                                <i class="fas fa-list me-2"></i>View All Tech Tips
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-lightbulb fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">No tech tips available yet</h5>
+                            <p class="text-muted">Check back soon for helpful tips and tricks!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4 mb-4">
+            <!-- My Tickets (if logged in) -->
+            {% if user.is_authenticated and user_tickets %}
+            <div class="card mb-4 animate-slide-up">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-ticket-alt me-2"></i>Your Recent Tickets
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% for ticket in user_tickets %}
+                    <div class="ticket-item">
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="card-title mb-0 fw-bold">{{ ticket.subject|truncatechars:25 }}</h6>
+                                <small class="text-muted">{{ ticket.created_at|date:"M d" }}</small>
+                            </div>
+                            <p class="card-text small text-muted mb-2">{{ ticket.description|truncatewords:8 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge badge-modern bg-secondary">{{ ticket.category }}</span>
+                                {% if ticket.status == 'Pending' %}
+                                    <span class="badge badge-modern bg-warning text-dark">{{ ticket.status }}</span>
+                                {% elif ticket.status == 'In Progress' %}
+                                    <span class="badge badge-modern bg-info">{{ ticket.status }}</span>
+                                {% else %}
+                                    <span class="badge badge-modern bg-success">{{ ticket.status }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div class="text-center mt-3">
+                        <a href="{% url 'ticket_list' %}" class="btn btn-outline-primary btn-modern">
+                            <i class="fas fa-list me-2"></i>View All My Tickets
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Current Quiz -->
+            {% if current_quiz %}
+            <div class="card animate-slide-up">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-question-circle me-2"></i>Knowledge Challenge
+                    </h6>
+                </div>
+                <div class="card-body text-center">
+                    <i class="fas fa-trophy fa-3x text-warning mb-3"></i>
+                    <h6 class="fw-bold">{{ current_quiz.title }}</h6>
+                    <p class="text-muted small mb-3">{{ current_quiz.month }} Knowledge Assessment</p>
+                    <a href="{{ current_quiz.form_url }}" target="_blank" class="btn btn-info-modern btn-modern w-100">
+                        <i class="fas fa-external-link-alt me-2"></i>Take Quiz Now
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- System Status -->
+            <div class="card mt-4 animate-slide-up">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-server me-2"></i>System Status
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-bold">Support System</span>
+                        <span class="badge badge-modern bg-success">Online</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-bold">Response Time</span>
+                        <span class="text-success fw-bold">~2 hours</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">Availability</span>
+                        <span class="text-success fw-bold">24/7</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Action Button -->
+<a href="{% url 'ticket_create' %}" class="floating-action-btn" title="Create Support Ticket">
+    <i class="fas fa-plus"></i>
+</a>
+
+<script>
+// Add smooth animations on scroll
+document.addEventListener('DOMContentLoaded', function() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Observe all cards for animation
+    document.querySelectorAll('.feature-card, .card, .stats-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
+});
+</script>
+{% endblock %} 
