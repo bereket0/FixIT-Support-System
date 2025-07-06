@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import Group, User
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
@@ -14,6 +14,14 @@ from quiz.models import Quiz
 
 def is_admin(user):
     return user.is_authenticated and user.groups.filter(name='IT Admin').exists()
+
+def custom_404(request, exception):
+    """Custom 404 error handler"""
+    return render(request, 'users/404.html', status=404)
+
+def custom_500(request):
+    """Custom 500 error handler"""
+    return render(request, 'users/500.html', status=500)
 
 def employee_dashboard(request):
     """Public employee dashboard - no login required"""

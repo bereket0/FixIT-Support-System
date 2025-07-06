@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Page Not Found - FixIT{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="error-page">
+                <h1 class="display-1 text-primary">404</h1>
+                <h2 class="mb-4">Oops! Page Not Found</h2>
+                <p class="lead mb-4">The page you're looking for doesn't exist or has been moved.</p>
+                
+                <div class="mb-4">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Employee Portal</h5>
+                                <p class="card-text">Access the main employee dashboard</p>
+                                <a href="{% url 'employee_dashboard' %}" class="btn btn-primary">
+                                    <i class="fas fa-home"></i> Go to Dashboard
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Support Tickets</h5>
+                                <p class="card-text">View and manage support tickets</p>
+                                <a href="{% url 'ticket_list' %}" class="btn btn-success">
+                                    <i class="fas fa-ticket-alt"></i> View Tickets
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <a href="{% url 'employee_dashboard' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-page {
+    padding: 2rem 0;
+}
+
+.error-page .display-1 {
+    font-size: 6rem;
+    font-weight: bold;
+    color: #007bff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.error-page .card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.error-page .card:hover {
+    transform: translateY(-5px);
+}
+</style>
+{% endblock %} 
